@@ -1,0 +1,272 @@
+// Mock data for group messaging features
+export const GROUP_CONVERSATIONS = [
+  {
+    id: "g1",
+    name: "Sunset Apartments - All Tenants",
+    avatar: null,
+    lastMessage: "Water main maintenance scheduled for tomorrow 8am-12pm",
+    timestamp: "Yesterday",
+    unread: 0,
+    userType: "property-group",
+    propertyName: "Sunset Apartments",
+    unitNumber: null,
+    members: 24,
+    isAnnouncement: true,
+  },
+  {
+    id: "g2",
+    name: "Building A Residents",
+    avatar: null,
+    lastMessage: "Elevator repairs completed, thanks for your patience",
+    timestamp: "Mon",
+    unread: 0,
+    userType: "building-group",
+    propertyName: "Oakwood Heights",
+    unitNumber: null,
+    members: 12,
+    isAnnouncement: false,
+  },
+  {
+    id: "g3",
+    name: "Maintenance Team",
+    avatar: null,
+    lastMessage: "Unit 101 reported AC issues, please check today",
+    timestamp: "Tue",
+    unread: 2,
+    userType: "maintenance-group",
+    propertyName: "All Properties",
+    unitNumber: null,
+    members: 5,
+    isAnnouncement: false,
+  },
+  {
+    id: "g4",
+    name: "Emergency Announcements",
+    avatar: null,
+    lastMessage: "Storm warning: Please secure outdoor furniture",
+    timestamp: "Wed",
+    unread: 1,
+    userType: "emergency-group",
+    propertyName: "All Properties",
+    unitNumber: null,
+    members: 54,
+    isAnnouncement: true,
+  },
+]
+
+// Mock group message data
+export const GROUP_MESSAGES = {
+  g1: [
+    {
+      id: "gm1",
+      text: "Welcome to the Sunset Apartments community group!",
+      sender: "admin1",
+      senderName: "Property Manager",
+      timestamp: "Sep 15, 10:15 AM",
+      isAnnouncement: true,
+    },
+    {
+      id: "gm2",
+      text: "Has anyone had issues with the hot water this morning?",
+      sender: "user1",
+      senderName: "Sarah Johnson",
+      timestamp: "Sep 16, 8:30 AM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm3",
+      text: "Yes, I noticed it was running cold in Building B.",
+      sender: "user2",
+      senderName: "John Smith",
+      timestamp: "Sep 16, 8:35 AM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm4",
+      text: "We're aware of the hot water issue in Building B. Our maintenance team is working on it and should be resolved by noon today. We apologize for the inconvenience.",
+      sender: "admin1",
+      senderName: "Property Manager",
+      timestamp: "Sep 16, 9:00 AM",
+      isAnnouncement: true,
+    },
+    {
+      id: "gm5",
+      text: "Thanks for the quick response!",
+      sender: "current-user",
+      senderName: "You",
+      timestamp: "Sep 16, 9:05 AM",
+      isAnnouncement: false,
+    },
+  ],
+
+  g2: [
+    {
+      id: "gm6",
+      text: "REMINDER: Quarterly building inspection scheduled for tomorrow between 10am-4pm. Please ensure access to your unit or contact the office to reschedule.",
+      sender: "admin2",
+      senderName: "Maintenance Coordinator",
+      timestamp: "Sep 14, 3:30 PM",
+      isAnnouncement: true,
+    },
+    {
+      id: "gm7",
+      text: "Will someone be checking the HVAC systems as part of this inspection?",
+      sender: "user3",
+      senderName: "Mike Wilson",
+      timestamp: "Sep 14, 4:15 PM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm8",
+      text: "Yes, HVAC inspections are included. Please report any specific issues you've been experiencing so we can address them.",
+      sender: "admin2",
+      senderName: "Maintenance Coordinator",
+      timestamp: "Sep 14, 4:30 PM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm9",
+      text: "The AC in my unit (302) has been making strange noises. Could you please check that?",
+      sender: "current-user",
+      senderName: "You",
+      timestamp: "Sep 14, 5:45 PM",
+      isAnnouncement: false,
+    },
+  ],
+
+  g3: [
+    {
+      id: "gm10",
+      text: "URGENT: Water will be shut off in the Oakwood Heights complex tomorrow from 9am-1pm for emergency pipe repairs.",
+      sender: "admin1",
+      senderName: "Property Manager",
+      timestamp: "Sep 17, 4:20 PM",
+      isAnnouncement: true,
+    },
+    {
+      id: "gm11",
+      text: "Is this for all buildings or just specific ones?",
+      sender: "user4",
+      senderName: "Rebecca Chang",
+      timestamp: "Sep 17, 4:35 PM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm12",
+      text: "This affects all buildings in the Oakwood Heights complex. Please plan accordingly.",
+      sender: "admin1",
+      senderName: "Property Manager",
+      timestamp: "Sep 17, 4:40 PM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm13",
+      text: "Will bottled water be provided during the outage?",
+      sender: "current-user",
+      senderName: "You",
+      timestamp: "Sep 17, 5:15 PM",
+      isAnnouncement: false,
+    },
+  ],
+
+  g4: [
+    {
+      id: "gm14",
+      text: "Monthly maintenance team meeting scheduled for tomorrow at 8am in the main office.",
+      sender: "admin3",
+      senderName: "Facility Manager",
+      timestamp: "Sep 18, 2:00 PM",
+      isAnnouncement: true,
+    },
+    {
+      id: "gm15",
+      text: "I've updated the maintenance schedule for next week. Please review your assignments.",
+      sender: "admin3",
+      senderName: "Facility Manager",
+      timestamp: "Sep 18, 2:30 PM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm16",
+      text: "Looks good to me. I noticed a few overlapping appointments on Thursday though.",
+      sender: "user5",
+      senderName: "David Rodriguez",
+      timestamp: "Sep 18, 2:45 PM",
+      isAnnouncement: false,
+    },
+    {
+      id: "gm17",
+      text: "I'll be out sick tomorrow. Can someone cover my assignments?",
+      sender: "current-user",
+      senderName: "You",
+      timestamp: "Sep 18, 3:50 PM",
+      isAnnouncement: false,
+    },
+  ],
+}
+
+// Mock automation notification templates
+export const AUTOMATED_NOTIFICATIONS = [
+  {
+    id: "n1",
+    type: "rent-reminder",
+    title: "Rent Payment Reminder",
+    text: "Hi [TENANT_NAME], this is a friendly reminder that your rent of $[AMOUNT] for [PROPERTY_NAME] Unit [UNIT_NUMBER] is due on [DUE_DATE].",
+  },
+  {
+    id: "n2",
+    type: "lease-expiration",
+    title: "Lease Expiration Notification",
+    text: "Hello [TENANT_NAME], your lease at [PROPERTY_NAME] Unit [UNIT_NUMBER] is set to expire on [EXPIRATION_DATE]. Please contact the office to discuss renewal options.",
+  },
+  {
+    id: "n3",
+    type: "maintenance-completion",
+    title: "Maintenance Request Completed",
+    text: "Dear [TENANT_NAME], we have completed the maintenance request #[REQUEST_ID] for [ISSUE] at [PROPERTY_NAME] Unit [UNIT_NUMBER]. Please let us know if you have any further concerns.",
+  },
+  {
+    id: "n4",
+    type: "emergency",
+    title: "Emergency Alert",
+    text: "ATTENTION [PROPERTY_NAME] RESIDENTS: [EMERGENCY_DETAILS]. Please follow all safety instructions and contact emergency services if needed.",
+  },
+]
+
+// Sample active automated notification settings
+export const ACTIVE_AUTOMATIONS = [
+  {
+    id: "a1",
+    type: "rent-reminder",
+    enabled: true,
+    customText: null,
+    properties: ["all"],
+    scheduleDaysBefore: 5,
+  },
+  {
+    id: "a2",
+    type: "lease-expiration",
+    enabled: true,
+    customText:
+      "Hello [TENANT_NAME], your lease at [PROPERTY_NAME] Unit [UNIT_NUMBER] will expire on [EXPIRATION_DATE]. Please schedule a meeting with our leasing office at your earliest convenience to discuss renewal options and potential rate changes.",
+    properties: ["p2", "p3"],
+    scheduleDaysBefore: 30,
+  },
+  {
+    id: "a3",
+    type: "maintenance-completion",
+    enabled: false,
+    customText: null,
+    properties: ["p3"],
+    scheduleDaysBefore: null,
+  },
+  {
+    id: "a4",
+    type: "emergency",
+    enabled: true,
+    customText: null,
+    properties: ["all"],
+    scheduleDaysBefore: null,
+  },
+]
+
