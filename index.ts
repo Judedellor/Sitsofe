@@ -1,8 +1,10 @@
-import { registerRootComponent } from 'expo';
-
-import App from './App';
-
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+// Export all UI components for easy imports
+export { BackButton } from './BackButton';
+export { SkeletonLoader, PropertyCardSkeleton, ListItemSkeleton, DashboardSkeleton } from './SkeletonLoader';
+export { AccessibleTouchable } from './AccessibleTouchable';
+export { LoadingState } from './LoadingState';
+export { ErrorState } from './ErrorState';
+export { OfflineNotice } from './OfflineNotice';
+export { OptimizedFlatList } from './OptimizedFlatList';
+export { MediaPicker } from './MediaPicker';
+export { CameraComponent } from './CameraComponent';
