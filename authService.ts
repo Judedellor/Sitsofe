@@ -198,4 +198,32 @@ export const authService = {
       throw error;
     }
   },
+
+  // New API endpoints for updating user profile information
+  updateUserProfile: async (userId: string, profileData: Partial<User>) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(profileData)
+        .eq('id', userId);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // New API endpoints for authentication
+  authenticateUser: async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
