@@ -4,47 +4,7 @@ import { useState, useEffect } from "react"
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Ionicons } from "@expo/vector-icons"
-
-// Mock data for applicant details
-const mockApplicantDetails = {
-  id: "2",
-  name: "Maria Garcia",
-  email: "maria.garcia@example.com",
-  phone: "(555) 234-5678",
-  propertyId: "2",
-  propertyName: "Ocean View Apartments",
-  applicationDate: "2023-10-14",
-  status: "screening",
-  riskScore: 72,
-  backgroundCheck: "in_progress",
-  creditScore: 680,
-  income: 65000,
-  rentToComeRatio: 28,
-  employmentStatus: "Full-time",
-  employer: "Tech Solutions Inc.",
-  employmentLength: "3 years",
-  previousAddress: "123 Main St, Apt 4B, Springfield, IL",
-  previousLandlord: "John Property Management",
-  previousRent: 1200,
-  evictionHistory: false,
-  criminalHistory: false,
-  identityVerified: true,
-  documents: [
-    { id: "1", name: "Application Form", status: "verified", type: "application" },
-    { id: "2", name: "ID Document", status: "verified", type: "identification" },
-    { id: "3", name: "Proof of Income", status: "suspicious", type: "income" },
-    { id: "4", name: "Credit Report", status: "verified", type: "credit" },
-    { id: "5", name: "Background Check", status: "pending", type: "background" },
-  ],
-  aiInsights: [
-    "Income verification shows consistent employment history",
-    "Credit score indicates moderate financial stability",
-    "Rent-to-income ratio is within acceptable range",
-    "Possible inconsistency detected in income documentation",
-    "No eviction or criminal history found",
-  ],
-  avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-}
+import api from "../api"
 
 const ApplicantDetailsScreen = ({ route, navigation }) => {
   const { applicantId } = route.params
@@ -53,11 +13,18 @@ const ApplicantDetailsScreen = ({ route, navigation }) => {
   const [activeTab, setActiveTab] = useState("overview")
 
   useEffect(() => {
-    // Simulate API call to fetch applicant details
-    setTimeout(() => {
-      setApplicant(mockApplicantDetails)
-      setLoading(false)
-    }, 1000)
+    const fetchApplicantDetails = async () => {
+      try {
+        const response = await api.get(`/applicants/${applicantId}`)
+        setApplicant(response.data)
+      } catch (error) {
+        Alert.alert("Error", "Failed to fetch applicant details")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchApplicantDetails()
   }, [applicantId])
 
   const getStatusColor = (status) => {
@@ -105,15 +72,17 @@ const ApplicantDetailsScreen = ({ route, navigation }) => {
       },
       {
         text: "Approve",
-        onPress: () => {
-          // Update applicant status
-          setApplicant({
-            ...applicant,
-            status: "approved",
-          })
-
-          // Simulate API call
-          Alert.alert("Applicant Approved", "The applicant has been approved.")
+        onPress: async () => {
+          try {
+            await api.post(`/applicants/${applicantId}/approve`)
+            setApplicant({
+              ...applicant,
+              status: "approved",
+            })
+            Alert.alert("Applicant Approved", "The applicant has been approved.")
+          } catch (error) {
+            Alert.alert("Error", "Failed to approve applicant")
+          }
         },
       },
     ])
@@ -127,15 +96,17 @@ const ApplicantDetailsScreen = ({ route, navigation }) => {
       },
       {
         text: "Reject",
-        onPress: () => {
-          // Update applicant status
-          setApplicant({
-            ...applicant,
-            status: "rejected",
-          })
-
-          // Simulate API call
-          Alert.alert("Applicant Rejected", "The applicant has been rejected.")
+        onPress: async () => {
+          try {
+            await api.post(`/applicants/${applicantId}/reject`)
+            setApplicant({
+              ...applicant,
+              status: "rejected",
+            })
+            Alert.alert("Applicant Rejected", "The applicant has been rejected.")
+          } catch (error) {
+            Alert.alert("Error", "Failed to reject applicant")
+          }
         },
       },
     ])
@@ -266,7 +237,6 @@ const ApplicantDetailsScreen = ({ route, navigation }) => {
           <Text style={styles.infoValue}>{applicant.identityVerified ? "Yes" : "No"}</Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Background Check:</Text>
           <Text
             style={[
               styles.infoValue,
@@ -786,4 +756,3 @@ const styles = StyleSheet.create({
 })
 
 export default ApplicantDetailsScreen
-

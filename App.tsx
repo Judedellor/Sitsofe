@@ -3,9 +3,7 @@ import { NavigationContainer } from "@react-navigation/native"
 import { ErrorBoundary } from "./services/ErrorHandlingService"
 import OfflineNotice from "./components/OfflineNotice"
 import { AuthProvider } from "./context/AuthContext"
-
-// Import your main navigator
-// import AppNavigator from './navigation/AppNavigator'
+import AppNavigator from './navigation/AppNavigator'
 
 const App = () => {
   return (
@@ -14,7 +12,7 @@ const App = () => {
         <AuthProvider>
           <NavigationContainer>
             <OfflineNotice />
-            {/* <AppNavigator /> */}
+            <AppNavigator />
           </NavigationContainer>
         </AuthProvider>
       </SafeAreaProvider>
@@ -23,4 +21,3 @@ const App = () => {
 }
 
 export default App
-

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Ionicons } from "@expo/vector-icons"
@@ -9,209 +9,31 @@ import { COLORS } from "../constants/colors"
 import Card from "../components/ui/Card"
 import Button from "../components/ui/Button"
 import ProgressCircle from "../components/ProgressCircle"
+import api from "../api"
 
-// Mock compliance data
-const complianceData = {
-  summary: {
-    total: 42,
-    completed: 35,
-    upcoming: 5,
-    overdue: 2,
-    completionRate: 83,
-  },
-  categories: [
-    {
-      id: "1",
-      name: "Building Safety",
-      total: 12,
-      completed: 10,
-      upcoming: 1,
-      overdue: 1,
-    },
-    {
-      id: "2",
-      name: "Fire Safety",
-      total: 8,
-      completed: 7,
-      upcoming: 1,
-      overdue: 0,
-    },
-    {
-      id: "3",
-      name: "Environmental",
-      total: 6,
-      completed: 5,
-      upcoming: 1,
-      overdue: 0,
-    },
-    {
-      id: "4",
-      name: "Accessibility",
-      total: 5,
-      completed: 4,
-      upcoming: 0,
-      overdue: 1,
-    },
-    {
-      id: "5",
-      name: "Health & Sanitation",
-      total: 7,
-      completed: 6,
-      upcoming: 1,
-      overdue: 0,
-    },
-    {
-      id: "6",
-      name: "Licensing",
-      total: 4,
-      completed: 3,
-      upcoming: 1,
-      overdue: 0,
-    },
-  ],
-  upcomingDeadlines: [
-    {
-      id: "1",
-      title: "Annual Fire Inspection",
-      property: "Modern Luxury Apartment",
-      category: "Fire Safety",
-      dueDate: "2024-04-15",
-      daysRemaining: 7,
-      status: "upcoming",
-    },
-    {
-      id: "2",
-      title: "Elevator Certification Renewal",
-      property: "Downtown Penthouse",
-      category: "Building Safety",
-      dueDate: "2024-04-20",
-      daysRemaining: 12,
-      status: "upcoming",
-    },
-    {
-      id: "3",
-      title: "HVAC System Inspection",
-      property: "Cozy Studio Loft",
-      category: "Environmental",
-      dueDate: "2024-04-25",
-      daysRemaining: 17,
-      status: "upcoming",
-    },
-    {
-      id: "4",
-      title: "Property Tax Filing",
-      property: "All Properties",
-      category: "Licensing",
-      dueDate: "2024-04-30",
-      daysRemaining: 22,
-      status: "upcoming",
-    },
-    {
-      id: "5",
-      title: "Pest Control Inspection",
-      property: "Suburban Family Home",
-      category: "Health & Sanitation",
-      dueDate: "2024-05-05",
-      daysRemaining: 27,
-      status: "upcoming",
-    },
-  ],
-  overdueItems: [
-    {
-      id: "1",
-      title: "ADA Compliance Audit",
-      property: "Modern Luxury Apartment",
-      category: "Accessibility",
-      dueDate: "2024-03-30",
-      daysOverdue: 8,
-      status: "overdue",
-    },
-    {
-      id: "2",
-      title: "Structural Inspection",
-      property: "Beachfront Villa",
-      category: "Building Safety",
-      dueDate: "2024-04-01",
-      daysOverdue: 6,
-      status: "overdue",
-    },
-  ],
-  recentActivity: [
-    {
-      id: "1",
-      action: "Completed",
-      title: "Fire Extinguisher Inspection",
-      property: "Modern Luxury Apartment",
-      date: "2024-04-05",
-      user: "John Smith",
-    },
-    {
-      id: "2",
-      action: "Uploaded",
-      title: "Building Permit Renewal",
-      property: "Downtown Penthouse",
-      date: "2024-04-03",
-      user: "Sarah Johnson",
-    },
-    {
-      id: "3",
-      action: "Scheduled",
-      title: "Annual Fire Inspection",
-      property: "Modern Luxury Apartment",
-      date: "2024-04-02",
-      user: "John Smith",
-    },
-    {
-      id: "4",
-      action: "Updated",
-      title: "Elevator Certification",
-      property: "Downtown Penthouse",
-      date: "2024-03-30",
-      user: "Sarah Johnson",
-    },
-    {
-      id: "5",
-      action: "Completed",
-      title: "Water Quality Test",
-      property: "Suburban Family Home",
-      date: "2024-03-28",
-      user: "Michael Brown",
-    },
-  ],
-  regulatoryUpdates: [
-    {
-      id: "1",
-      title: "New Fire Safety Regulations",
-      description: "Updated fire safety requirements for multi-family buildings effective June 1, 2024",
-      date: "2024-04-01",
-      source: "City Fire Department",
-      impact: "high",
-      properties: ["Modern Luxury Apartment", "Downtown Penthouse", "Cozy Studio Loft"],
-    },
-    {
-      id: "2",
-      title: "Property Tax Filing Deadline Extension",
-      description: "The deadline for property tax filings has been extended to April 30, 2024",
-      date: "2024-03-25",
-      source: "County Tax Assessor",
-      impact: "medium",
-      properties: ["All Properties"],
-    },
-    {
-      id: "3",
-      title: "Updated Accessibility Requirements",
-      description: "New accessibility standards for common areas in residential buildings",
-      date: "2024-03-15",
-      source: "Department of Housing",
-      impact: "medium",
-      properties: ["Modern Luxury Apartment", "Downtown Penthouse", "Cozy Studio Loft"],
-    },
-  ],
-}
-
+// Compliance data state
 const ComplianceDashboardScreen = () => {
   const navigation = useNavigation()
   const [activeTab, setActiveTab] = useState("overview")
+  const [complianceData, setComplianceData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchComplianceData = async () => {
+      try {
+        setLoading(true)
+        const response = await api.get("/compliance")
+        setComplianceData(response.data)
+      } catch (err) {
+        setError("Failed to fetch compliance data")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchComplianceData()
+  }, [])
 
   // Format date
   const formatDate = (dateString) => {
@@ -476,7 +298,15 @@ const ComplianceDashboardScreen = () => {
       </View>
 
       <ScrollView style={styles.content}>
-        {activeTab === "overview" ? renderOverviewTab() : renderCategoriesTab()}
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : error ? (
+          <Text>{error}</Text>
+        ) : activeTab === "overview" ? (
+          renderOverviewTab()
+        ) : (
+          renderCategoriesTab()
+        )}
       </ScrollView>
     </SafeAreaView>
   )
@@ -765,4 +595,3 @@ const styles = StyleSheet.create({
 })
 
 export default ComplianceDashboardScreen
-

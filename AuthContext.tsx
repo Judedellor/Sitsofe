@@ -5,6 +5,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as SecureStore from "expo-secure-store"
 import { Platform } from "react-native"
+import { authService } from './authService';
 
 // Define user type with roles
 export type UserRole = "admin" | "property_manager" | "tenant" | "maintenance_staff"
@@ -32,7 +33,7 @@ interface AuthContextType {
   loading: boolean
   error: string | null
   isLoading: boolean
-  login: (userData: User) => Promise<void>
+  login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   register: (firstName: string, email: string, password: string, role?: UserRole) => Promise<boolean>
   updateUser: (userData: Partial<User>) => Promise<void>
@@ -43,102 +44,11 @@ interface AuthContextType {
   requestPasswordReset: (email: string) => Promise<boolean>
   hasPermission: (permission: string) => boolean
   setUserRole: (userId: string, role: UserRole) => Promise<boolean>
+  updateProfile: (userData: Partial<User>) => Promise<void>
 }
 
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-// Mock API functions (in a real app, these would call your backend)
-const mockApi = {
-  login: async (email: string, password: string): Promise<User | null> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const users: Record<string, User> = {
-      "admin@example.com": {
-        id: "1",
-        email: "admin@example.com",
-        name: "Admin User",
-        firstName: "Admin",
-        lastName: "User",
-        role: "admin",
-        permissions: ["manage_users", "manage_properties", "manage_finances", "manage_maintenance"],
-        verified: true,
-      },
-      "manager@example.com": {
-        id: "2",
-        email: "manager@example.com",
-        name: "Property Manager",
-        firstName: "Property",
-        lastName: "Manager",
-        role: "property_manager",
-        permissions: ["manage_properties", "manage_tenants", "view_finances"],
-        properties: ["1", "2", "3"],
-        verified: true,
-      },
-      "tenant@example.com": {
-        id: "3",
-        email: "tenant@example.com",
-        name: "Tenant User",
-        firstName: "Tenant",
-        lastName: "User",
-        role: "tenant",
-        permissions: ["view_leases", "create_maintenance_requests"],
-        properties: ["1"],
-        verified: true,
-      },
-      "maintenance@example.com": {
-        id: "4",
-        email: "maintenance@example.com",
-        name: "Maintenance Staff",
-        firstName: "Maintenance",
-        lastName: "Staff",
-        role: "maintenance_staff",
-        permissions: ["view_maintenance_requests", "update_maintenance_requests"],
-        properties: ["1", "2", "3", "4"],
-        verified: true,
-      },
-    };
-
-    if (users[email] && password.length > 0) {
-      return {
-        ...users[email],
-        lastLogin: new Date().toISOString(),
-      };
-    }
-
-    return null;
-  },
-
-  register: async (firstName: string, email: string, password: string, role?: UserRole): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return true;
-  },
-
-  verifyEmail: async (code: string): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return true;
-  },
-
-  sendVerificationEmail: async (email: string): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return true;
-  },
-
-  resetPassword: async (email: string, code: string, newPassword: string): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return true;
-  },
-
-  requestPasswordReset: async (email: string): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return true;
-  },
-
-  setUserRole: async (userId: string, role: UserRole): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return true;
-  },
-};
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -171,13 +81,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (userData: User) => {
+  const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
-      setIsAuthenticated(true);
+      const userData = await authService.login({ email, password });
+      if (userData) {
+        await AsyncStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+        setIsAuthenticated(true);
+      } else {
+        setError('Invalid email or password');
+      }
     } catch (err) {
       setError('Failed to login');
       throw err;
@@ -190,6 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
+      await authService.logout();
       await AsyncStorage.removeItem('user');
       setUser(null);
       setIsAuthenticated(false);
@@ -206,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const success = await mockApi.register(firstName, email, password, role);
+      const success = await authService.signup({ email, password, name: firstName, role });
       return success;
     } catch (error) {
       setError('Error registering');
@@ -241,7 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      return await mockApi.verifyEmail(code);
+      return await authService.verifyEmail(code);
     } catch (error) {
       setError('Error verifying email');
       return false;
@@ -255,7 +171,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      return await mockApi.sendVerificationEmail(email);
+      return await authService.sendVerificationEmail(email);
     } catch (error) {
       setError('Error sending verification email');
       return false;
@@ -269,7 +185,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      return await mockApi.resetPassword(email, code, newPassword);
+      return await authService.resetPassword(email, code, newPassword);
     } catch (error) {
       setError('Error resetting password');
       return false;
@@ -283,7 +199,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      return await mockApi.requestPasswordReset(email);
+      return await authService.requestPasswordReset(email);
     } catch (error) {
       setError('Error requesting password reset');
       return false;
@@ -302,7 +218,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      return await mockApi.setUserRole(userId, role);
+      return await authService.setUserRole(userId, role);
     } catch (error) {
       setError('Error setting user role');
       return false;
@@ -310,6 +226,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
     }
   };
+
+  // Update profile function
+  const updateProfile = async (userData: Partial<User>) => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (!user) {
+        throw new Error("No user logged in")
+      }
+
+      const updatedUser = { ...user, ...userData }
+      await authService.updateProfile(updatedUser)
+      await AsyncStorage.setItem("@user", JSON.stringify(updatedUser))
+      setUser(updatedUser)
+    } catch (err) {
+      setError('Failed to update profile');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const value: AuthContextType = {
     user,
@@ -327,6 +264,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     hasPermission,
     setUserRole,
     updateUser,
+    updateProfile,
   };
 
   return (

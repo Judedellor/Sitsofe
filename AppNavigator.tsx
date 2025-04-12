@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../context/AuthContext';
 
 // Auth Screens
 import { LoginScreen } from '../screens/auth/LoginScreen';
@@ -172,14 +173,13 @@ const MainTabNavigator = () => {
 
 // Root Navigator
 const AppNavigator = () => {
-  // Determine if user is logged in
-  const isLoggedIn = false; // Replace with actual auth state
+  const { isAuthenticated } = useAuth();
 
   return (
     <NavigationContainer>
       <NavigationValidator />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isLoggedIn ? (
+        {!isAuthenticated ? (
           <Stack.Screen name="Auth" component={AuthNavigator} />
         ) : (
           <>

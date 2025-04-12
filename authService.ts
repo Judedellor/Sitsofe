@@ -139,4 +139,91 @@ export const authService = {
       throw error;
     }
   },
-}; 
+
+  verifyEmail: async (code: string) => {
+    try {
+      const { error } = await supabase.auth.verifyOTP({
+        email: code,
+        type: 'signup',
+      });
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  sendVerificationEmail: async (email: string) => {
+    try {
+      const { error } = await supabase.auth.api.sendMagicLinkEmail(email);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  requestPasswordReset: async (email: string) => {
+    try {
+      const { error } = await supabase.auth.api.resetPasswordForEmail(email);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  setUserRole: async (userId: string, role: 'landlord' | 'tenant' | 'admin') => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role })
+        .eq('id', userId);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateProfile: async (userData: Partial<User>) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(userData)
+        .eq('id', userData.id);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // New API endpoints for updating user profile information
+  updateUserProfile: async (userId: string, profileData: Partial<User>) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(profileData)
+        .eq('id', userId);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // New API endpoints for authentication
+  authenticateUser: async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+};
