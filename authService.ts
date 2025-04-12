@@ -185,4 +185,17 @@ export const authService = {
       throw error;
     }
   },
+
+  updateProfile: async (userData: Partial<User>) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(userData)
+        .eq('id', userData.id);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

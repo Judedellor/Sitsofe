@@ -363,4 +363,3 @@ const styles = StyleSheet.create({
 })
 
 export default VirtualTourScreen
-

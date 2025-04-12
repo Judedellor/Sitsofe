@@ -21,6 +21,7 @@ const UserProfileScreen = () => {
   const [email, setEmail] = useState(user?.email || "")
   const [phone, setPhone] = useState(user?.phone || "")
   const [avatar, setAvatar] = useState(user?.avatar || "https://via.placeholder.com/150")
+  const [preferences, setPreferences] = useState(user?.preferences || "")
 
   useEffect(() => {
     if (user) {
@@ -29,6 +30,7 @@ const UserProfileScreen = () => {
       setEmail(user.email || "")
       setPhone(user.phone || "")
       setAvatar(user.avatar || "https://via.placeholder.com/150")
+      setPreferences(user.preferences || "")
     }
   }, [user])
 
@@ -47,6 +49,7 @@ const UserProfileScreen = () => {
         email,
         phone,
         avatar,
+        preferences,
         name: `${firstName} ${lastName}`,
       })
 
@@ -150,6 +153,13 @@ const UserProfileScreen = () => {
               keyboardType="phone-pad"
             />
 
+            <FormInput
+              label="Preferences"
+              value={preferences}
+              onChangeText={setPreferences}
+              placeholder="Enter your preferences"
+            />
+
             <Button
               title={isLoading ? "Saving..." : "Save Changes"}
               onPress={handleSave}
@@ -169,6 +179,11 @@ const UserProfileScreen = () => {
             <View style={styles.detailItem}>
               <Text style={styles.detailLabel}>Phone</Text>
               <Text style={styles.detailValue}>{user?.phone || "Not provided"}</Text>
+            </View>
+
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Preferences</Text>
+              <Text style={styles.detailValue}>{user?.preferences || "Not provided"}</Text>
             </View>
 
             <View style={styles.detailItem}>
@@ -324,4 +339,3 @@ const styles = StyleSheet.create({
 })
 
 export default UserProfileScreen
-

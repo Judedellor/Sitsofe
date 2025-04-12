@@ -44,6 +44,7 @@ interface AuthContextType {
   requestPasswordReset: (email: string) => Promise<boolean>
   hasPermission: (permission: string) => boolean
   setUserRole: (userId: string, role: UserRole) => Promise<boolean>
+  updateProfile: (userData: Partial<User>) => Promise<void>
 }
 
 // Create context
@@ -226,6 +227,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Update profile function
+  const updateProfile = async (userData: Partial<User>) => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (!user) {
+        throw new Error("No user logged in")
+      }
+
+      const updatedUser = { ...user, ...userData }
+      await authService.updateProfile(updatedUser)
+      await AsyncStorage.setItem("@user", JSON.stringify(updatedUser))
+      setUser(updatedUser)
+    } catch (err) {
+      setError('Failed to update profile');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const value: AuthContextType = {
     user,
     loading,
@@ -242,6 +264,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     hasPermission,
     setUserRole,
     updateUser,
+    updateProfile,
   };
 
   return (
