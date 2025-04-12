@@ -1,20 +1,6 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-
-// Create a mock store since the actual store module is missing
-const mockStore = {
-  getState: () => ({
-    auth: {
-      token: null
-    }
-  }),
-  dispatch: (action: any) => {}
-};
-
-// Use the mock store instead of the missing one
-const store = mockStore;
-
-// Mock logout function since the actual one is missing
-const logout = () => ({ type: 'LOGOUT' });
+import store from './store';
+import { logout } from './authActions';
 
 const BASE_URL = 'https://api.yourdomain.com'; // Replace with your actual API URL
 
@@ -64,4 +50,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api; 
+export default api;

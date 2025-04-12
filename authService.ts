@@ -139,4 +139,50 @@ export const authService = {
       throw error;
     }
   },
-}; 
+
+  verifyEmail: async (code: string) => {
+    try {
+      const { error } = await supabase.auth.verifyOTP({
+        email: code,
+        type: 'signup',
+      });
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  sendVerificationEmail: async (email: string) => {
+    try {
+      const { error } = await supabase.auth.api.sendMagicLinkEmail(email);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  requestPasswordReset: async (email: string) => {
+    try {
+      const { error } = await supabase.auth.api.resetPasswordForEmail(email);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  setUserRole: async (userId: string, role: 'landlord' | 'tenant' | 'admin') => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role })
+        .eq('id', userId);
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+};
