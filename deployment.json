@@ -1,0 +1,68 @@
+{
+  "project": "homehub",
+  "environments": {
+    "production": {
+      "database": {
+        "connectionPooling": true,
+        "maxConnections": 10,
+        "minConnections": 2,
+        "connectionTimeout": 30
+      },
+      "api": {
+        "rateLimit": {
+          "enabled": true,
+          "requests": 100,
+          "period": 60
+        },
+        "cors": {
+          "allowedOrigins": ["https://homehub.com", "https://www.homehub.com"],
+          "allowedMethods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+          "allowedHeaders": ["Content-Type", "Authorization"],
+          "maxAge": 86400
+        }
+      },
+      "storage": {
+        "uploadLimit": "10MB",
+        "allowedTypes": ["image/jpeg", "image/png", "image/webp"]
+      },
+      "auth": {
+        "redirectUrls": ["https://homehub.com", "https://www.homehub.com"],
+        "emailTemplates": {
+          "confirmation": {
+            "subject": "Confirm your HomeHub account",
+            "template": "email-templates/confirmation"
+          },
+          "recovery": {
+            "subject": "Reset your HomeHub password",
+            "template": "email-templates/recovery"
+          },
+          "magicLink": {
+            "subject": "Your HomeHub login link",
+            "template": "email-templates/magic-link"
+          }
+        }
+      }
+    },
+    "staging": {
+      "database": {
+        "connectionPooling": true,
+        "maxConnections": 5,
+        "minConnections": 1,
+        "connectionTimeout": 30
+      },
+      "api": {
+        "rateLimit": {
+          "enabled": true,
+          "requests": 200,
+          "period": 60
+        },
+        "cors": {
+          "allowedOrigins": ["https://staging.homehub.com"],
+          "allowedMethods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+          "allowedHeaders": ["Content-Type", "Authorization"],
+          "maxAge": 86400
+        }
+      }
+    }
+  }
+}
